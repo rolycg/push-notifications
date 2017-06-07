@@ -122,3 +122,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+JAZWINGS_KEY = '57ae19b3-fc65-4fde-b8b7-1c4430f36982'
