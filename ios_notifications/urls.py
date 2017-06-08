@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from ios_test.views import send_message
+from ios_test.views import send_message, APNSDeviceViewSet
 
-from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet, GCMDeviceAuthorizedViewSet
+from push_notifications.api.rest_framework import GCMDeviceAuthorizedViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'device/apns', APNSDeviceAuthorizedViewSet)
+router.register(r'device/apns', APNSDeviceViewSet)
 router.register(r'device/gcm', GCMDeviceAuthorizedViewSet)
 
 
