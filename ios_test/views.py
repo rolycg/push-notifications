@@ -52,7 +52,7 @@ def send_message(request):
     if ret:
         title, msg = ret
         for device in APNSDevice.objects.all():
-            device.send_message(message={'title': title, 'body': msg})
+            device.send_message(message={'title': title, 'body': msg}, badge=1)
         return Response({'results': 'Ok'}, status=HTTP_200_OK)
     else:
         return Response({'Error': 'Wrong request'}, status=HTTP_400_BAD_REQUEST)
