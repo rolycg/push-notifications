@@ -3,15 +3,16 @@ import base64
 
 from Crypto import Random
 from Crypto.Cipher import AES
-from push_notifications.api.rest_framework import APNSDeviceSerializer, APNSDeviceAuthorizedViewSet
-from push_notifications.models import APNSDevice
-from rest_framework.decorators import api_view, list_route
+from push_notifications.api.rest_framework import APNSDeviceAuthorizedViewSet
+from rest_framework.decorators import api_view, list_route, detail_route
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import ModelViewSet
 
 from ios_notifications.settings import JAZWINGS_KEY
+from ios_test.models import APNSDevicesExtended
+from ios_test.serializer import APNSDeviceSerializerExtended
 
 iv = Random.new().read(AES.block_size)
 
@@ -51,8 +52,10 @@ def send_message(request):
     ret = parse_data(data)
     if ret:
         title, msg = ret
-        for device in APNSDevice.objects.all():
-            device.send_message(message={'title': title, 'body': msg}, badge=1)
+        for device in APNSDevicesExtended.objects.all():
+            device.badge += 1
+            device.send_message(message={'title': title, 'body': msg}, badge=device.badge)
+            device.save()
         return Response({'results': 'Ok'}, status=HTTP_200_OK)
     else:
         return Response({'Error': 'Wrong request'}, status=HTTP_400_BAD_REQUEST)
@@ -69,12 +72,21 @@ class MyDeviceViewSetMixin(APNSDeviceAuthorizedViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
-            print(str(serializer.data))
             return Response(serializer.data, status=HTTP_200_OK)
         else:
             return Response(serializer.error, status=HTTP_400_BAD_REQUEST)
 
+    @detail_route(methods=['GET'], permission_classes=(AllowAny,))
+    def restore(self, request, slug=None):
+        registration = slug or request.query_params['slug']
+        try:
+            device = APNSDevicesExtended.objects.get(registration_id=registration)
+            device.badge = 0
+            device.save()
+        except APNSDevicesExtended.DoesNotExist:
+            return Response({'Error': 'Registration not founded'}, status=HTTP_400_BAD_REQUEST)
+
 
 class APNSDeviceViewSet(MyDeviceViewSetMixin, ModelViewSet):
-    queryset = APNSDevice.objects.all()
-    serializer_class = APNSDeviceSerializer
+    queryset = APNSDevicesExtended.objects.all()
+    serializer_class = APNSDeviceSerializerExtended

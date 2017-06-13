@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'push_notifications',
-
+    'ios_test',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
 
 PUSH_NOTIFICATIONS_SETTINGS = {
     "APNS_CERTIFICATE": os.path.join(BASE_DIR, 'apns-dev.pem'),
-    "APNS_TOPIC": "com.jazwares.Jazwings",
+    "APNS_TOPIC": "com.jazwings",
     "APNS_USE_ALTERNATIVE_PORT": '2197',
     'APNS_USE_SANDBOX': 'api.development.push.apple.com'
 }
