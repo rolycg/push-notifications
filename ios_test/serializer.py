@@ -4,7 +4,7 @@ from ios_test.models import APNSDevicesExtended
 
 
 class APNSDeviceSerializerExtended(APNSDeviceSerializer):
-    badge = serializers.IntegerField()
+    badge = serializers.IntegerField(required=False)
 
     class Meta:
         model = APNSDevicesExtended

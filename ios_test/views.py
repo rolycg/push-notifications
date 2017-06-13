@@ -73,8 +73,6 @@ class MyDeviceViewSetMixin(APNSDeviceAuthorizedViewSet):
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             return Response(serializer.data, status=HTTP_200_OK)
-        else:
-            return Response(serializer.error, status=HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['GET'], permission_classes=(AllowAny,))
     def restore(self, request, slug=None):
