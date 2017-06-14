@@ -74,13 +74,14 @@ class MyDeviceViewSetMixin(APNSDeviceAuthorizedViewSet):
             self.perform_create(serializer)
             return Response(serializer.data, status=HTTP_200_OK)
 
-    @detail_route(methods=['GET'], permission_classes=(AllowAny,))
-    def restore(self, request, slug=None):
-        registration = slug or request.query_params['slug']
+    @list_route(methods=['POST'], permission_classes=(AllowAny,))
+    def restore(self, request):
+        registration = request.data['slug']
         try:
             device = APNSDevicesExtended.objects.get(registration_id=registration)
             device.badge = 0
             device.save()
+            return Response({}, status=HTTP_200_OK)
         except APNSDevicesExtended.DoesNotExist:
             return Response({'Error': 'Registration not founded'}, status=HTTP_400_BAD_REQUEST)
 
